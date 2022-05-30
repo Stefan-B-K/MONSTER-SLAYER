@@ -25,11 +25,12 @@ const app = Vue.createApp({
   },
   computed: {
     playerHealthBar () {
-      if (this.playerHealth())
-      return this.playerHealth / this.playerHealthMax * 100 + '%'
+      if (this.playerHealth < 0) return { width: '0%' }
+      return { width: this.playerHealth / this.playerHealthMax * 100 + '%' }
     },
     monsterHealthBar () {
-      return this.monsterHealth / this.monsterHealthMax * 100 + '%'
+      if (this.monsterHealth < 0) return { width: '0%' }
+      return { width: this.monsterHealth / this.monsterHealthMax * 100 + '%' }
     },
     specialAttackDisabled () {
       return this.currentRound % 3 !== 0
@@ -58,9 +59,17 @@ const app = Vue.createApp({
       if (this.playerHealth + healValue < 100) this.playerHealth += healValue
       else this.playerHealth = 100
       this.attackPlayer()
+    },
+    restartGame() {
+      this.playerHealth = 100
+      this.monsterHealth = 200
+      this.currentRound = 0
+      this.winner  = null
+    },
+    surrender() {
+      this.winner = 'monster'
     }
   }
 })
 
 app.mount('#game')
-
